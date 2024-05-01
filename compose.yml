@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  application:
+    build: ./application
+    image: application
+
+  broker:
+    build: ./broker
+    image: broker
+
+  device:
+    build: ./device
+    image: device
