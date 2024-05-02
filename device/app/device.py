@@ -1,9 +1,10 @@
+import os
 import socket
 import threading
 import json
 import time
 
-host = input("Qual o IP do Broker?")
+host = os.environ.get("ip_broker")
 
 HOST_TCP = host
 PORT_TCP = 12343

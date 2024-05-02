@@ -3,7 +3,7 @@ import os
 import threading
 import time
 
-HOST = input("Qual o IP do Broker?")
+HOST = os.environ.get("ip_broker")
 
 color_green = "\033[92m"
 color_red =  "\033[91m"
