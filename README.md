@@ -22,16 +22,16 @@ Com as tres imagens baixadas é possível executar cada um dos programas atravé
 #### Executando o Broker
 O Broker deve ser o primeiro programa a ser executado pois para a execução dos demais é necessário saber o IP da máquina na qual o Broker estará operando. Assim que o Broker for iniciado o IP da máquina será exibido no terminal no qual ele foi executado.
 ```bash
-docker run --network=host -it lfrcintra/broker
+docker run --network=host --rm -it lfrcintra/broker
 ```
 
 #### Executando a Aplicação e o Dispositivo
 Com o IP do Broker em mãos basta substituir *ip_do_broker* nos comandos abaixo pelo IP obtido no passo anterior e executá-los.
 ```bash
-docker run --network=host -it -e ip_broker=ip_do_broker lfrcintra/application
+docker run --network=host --rm -it -e ip_broker=ip_do_broker lfrcintra/application
 ```
 ```bash
-docker run --network=host -it -e ip_broker=ip_do_broker lfrcintra/device
+docker run --network=host --rm -it -e ip_broker=ip_do_broker lfrcintra/device
 ```
 **Obs.** É possível perceber que há três parâmetros, *network*, *it* e *e*, sendo utilizados nos comandos. O parâmetro *network* recebe a *host* da máquina na qual a imagem será executada, ou seja, ele vai compartilhar o mesmo IP e portas da máquina. Já o parâmetro *it* faz com que a execução seja interativa, possibilitando a utilização de entradas manuais com *input*. Por fim temos o parâmetro *e* que possibilita a entrada de um valor para a variável de ambiente *ip_broker*.
 

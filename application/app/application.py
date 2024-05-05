@@ -3,15 +3,18 @@ import os
 import threading
 import time
 
-HOST = os.environ.get("ip_broker")
+HOST = os.environ.get("ip_broker") # Pega o IP do broker passado como váriavel de ambiente Docker
 
+# Tags de cores usada para mudar a cor dos caracteres no terminal
 color_green = "\033[92m"
 color_red =  "\033[91m"
 color_white = "\033[0m"
 entry_detection = False
 
+# API
 base_url = 'http://'+HOST+':12345'
 
+# Metodo POST para enviar comandos para o Broker
 def post_command(command, sensor):
     dados = {'command': command, 'sensor': sensor}
     response = requests.post(f'{base_url}/commands', json=dados)
@@ -20,6 +23,7 @@ def post_command(command, sensor):
     else:
         print(f'Erro ao adicionar o comando: {response.status_code}')
 
+# Metodo GET usado para pegar os dados de todos os sensores conectados ao Broker
 def get_sensors():
     response = requests.get(f'{base_url}/sensors')
     if response.status_code == 200:
@@ -28,6 +32,7 @@ def get_sensors():
     else:
         return False
 
+# Limpa o console
 def clear_console():
     # Verifica o sistema operacional e executa o comando apropriado
     if os.name == "posix": # Linux e macOS
@@ -37,6 +42,7 @@ def clear_console():
     else:
         print("Não foi possível limpar a tela para este sistema.")
 
+# Exbibe os dados Estado e Temperatura de cada sensor no terminal
 def display_sensors():
     while True:
         global entry_detection
@@ -45,7 +51,7 @@ def display_sensors():
                 clear_console()
                 try:
                     sensors = get_sensors()
-                except requests.exceptions.RequestException:
+                except requests.exceptions.RequestException: # Caso a Aplicação não consiga pedir dados ao Broker começa a tentar reconexão
                     print("\nTentando conexão com o Broker...")
                     time.sleep(3)
                 else:
@@ -58,10 +64,12 @@ def display_sensors():
             time.sleep(3)
 
 
+# Cria uma thread pra ficar exibindo os dados atualizados no terminal
 thread_display = threading.Thread(target=display_sensors)
 thread_display.daemon = True
 thread_display.start()
 
+# Verifica a entrada de comandos dos usuario
 while True:
     input()
     entry_detection = True

@@ -3,12 +3,12 @@ version: '3'
 services:
   application:
     build: ./application
-    image: application
+    image: lfrcintra/application
 
   broker:
     build: ./broker
-    image: broker
+    image: lfrcintra/broker
 
   device:
     build: ./device
-    image: device
+    image: lfrcintra/device

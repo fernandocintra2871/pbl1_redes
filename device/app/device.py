@@ -2,9 +2,8 @@ import os
 import socket
 import threading
 import json
-import time
 
-host = os.environ.get("ip_broker")
+host = os.environ.get("ip_broker") # Pega o IP do broker passado como váriavel de ambiente Docker
 
 HOST_TCP = host
 PORT_TCP = 12343
@@ -39,7 +38,7 @@ def isfloat(num):
         return False
             
 # Função que envia através de um socket UDP
-def send_data(s, sensor):  
+def send_data(s, sensor):
     data = {"state": sensor.get_state(), "temp": sensor.get_temp()}
     msg = json.dumps(data) # Converte os dados para json
     s.sendall(msg.encode()) # Envia os dados para os disposistivos conectados ao socket
@@ -50,6 +49,11 @@ def receiver_data(sensor, s_udp, s_tcp):
         msg = ""
         try:
             msg = s_tcp.recv(1024).decode() # Lê os dados recebidos
+            if not msg:
+                s_tcp.close()
+                s_tcp = tcp_init()
+                send_data(s_udp, sensor)
+                print("\nPressione ENTER para digitar um comando.")
         except: # Caso perca a conexão com o Broker tenta criar uma nova
             s_tcp.close()
             s_tcp = tcp_init()
@@ -67,6 +71,9 @@ def receiver_data(sensor, s_udp, s_tcp):
 
         elif msg == 'test':
             s_tcp.sendall(b'test')
+
+        elif msg == 'reconnect':
+            send_data(s_udp, sensor) # Envia os dados atualizados
 
 # Função que inicia a conexão TCP para o recebimento de dados
 def tcp_init():
@@ -100,13 +107,6 @@ def udp_init():
     s_udp.sendall(msg.encode()) # Envia os dados atrves do socket
 
     return s_udp
-
-def get_ip():
-    hostname = socket.gethostname()    
-    ip = socket.gethostbyname(hostname)
-    return ip
-
-#print(get_ip())
 
 # Instancia o objeto Sensor
 sensor = Sensor()
